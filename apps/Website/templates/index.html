@@ -1,0 +1,80 @@
+[[extend 'layout.html']]
+
+<div id="vue-target">
+  <section class="section">
+    <div class="title">Notes</div>
+
+    <div class="level">
+      <div class="level-left">
+        <button @click="add_post" class="button is-link">
+          <span class="icon"><i class="fa fa-plus"></i></span> <span>Add Note</span>
+        </button>
+      </div>
+    </div>  
+      
+    <div class="columns  is-multiline">
+        <div class="column is-one-third"  v-for="post in posts">
+            <div class="box" v-bind:style=" { 'background-color': post.color } ">
+                <div class="is-pulled-right">
+                    <i @click="do_star(post._idx)" v-if="post.star"  class="fa fa-star"></i>
+                    <i @click="do_star(post._idx)" v-if="!post.star" class="fa fa-star-o"></i>
+                </div>
+                <div v-if="!post.edit" @click="do_edit(post._idx)"><b>{{post.title}}</b></div>
+                <textarea style="resize: none; outline: none;" class= "textarea" v-bind:style=" { 'background-color': post.color } " v-if="editing === false &&post.edit === false" @click="do_edit(post._idx)">{{post.content}}</textarea>
+                <textarea style="resize: none; outline: none;" class= "textarea" v-bind:style=" { 'background-color': post.color } " v-else-if="editing === true && post.edit === false" readonly>{{post.content}}</textarea>
+                    <div v-if="post.edit">
+                        <input class="input" type="text" v-model="post.title" :class="post.title === post.server_title ? 'is-link' : 'is-danger'">
+                        <textarea style="resize: none; outline: none;" v-model="post.content"  class="textarea box"
+                                  :class="post.content === post.server_content ? 'is-link' : 'is-danger'"
+                        ></textarea>
+                    </div>
+                    <!-- Save button -->
+                    <div v-if="post.edit" class="level-item">
+                        <button  style="margin-top: 1rem"  @click="do_save(post._idx)" class="button is-success">
+                        <span class="icon">
+                        <i class="fa fa-cloud-upload"></i>
+                        </span>
+                        <span>Save</span>
+                        </button>
+                        
+                        <button  style="margin-top: 1rem; margin-left: 1rem"  @click="do_cancel(post._idx)" class="button">
+                        <span class="icon">
+                        <i class="fa fa-minus-circle"></i>
+                        </span>
+                        <span>Cancel</span>
+                        </button>
+                    </div>
+                 
+                
+                <!-- Color and trash buttons -->
+                <div class="buttons is-grouped" style="margin-top: 1rem">
+   
+                  <button @click="do_color(post._idx, '#b3daff')" class="button" style="background-color: #b3daff; border-color:black"></button>
+                  <button @click="do_color(post._idx, '#99ff99')" class="button" style="background-color: #99ff99; border-color:black"></button>
+                  <button @click="do_color(post._idx, '#ffffb3')" class="button" style="background-color: #ffffb3; border-color:black"></button>
+                  <button @click="do_color(post._idx, '#ff9999')" class="button" style="background-color: #ff9999; border-color:black"></button>
+
+                  <button @click="confirmDelete(post._idx)" class="button is-danger" style="margin-left: auto">
+                    <span>Delete</span>
+                    <span class="icon">
+                      <i class="fa fa-times"></i>
+                    </span></button>
+        
+                
+                </div>
+                
+            </div>
+        </div>
+    </div>
+  </section>
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+    let posts_url = "[[=XML(posts_url)]]";
+    let delete_url = "[[=XML(delete_url)]]";
+    let user_email = "[[=XML(user_email)]]";
+</script>
+<script src="js/index.js"></script>
+[[end]]
